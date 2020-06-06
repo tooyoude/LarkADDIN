@@ -27,12 +27,63 @@ namespace LarkADDIN
         {
             try
             {
-                this.doc = Doc;
+               
 
                 Word.Range rng = Doc.Range(0, 0);
                 
                 rng.Text = "Hello World";
+                
+                this.PageSetting(Doc, this.Application);
+                this.CreateIndex(Doc, this.Application);
 
+
+                //rng.Select();
+            }
+            catch (Exception ex)
+            {
+                // Handle exception if for some reason the document is not available.
+            }
+        }
+
+        private void CreateIndex(Word.Document Doc, Word.Application App)
+        {
+            try
+            {
+                App.Selection.Start = 0;
+                App.Selection.End = 0;
+                object beginLevel = 1;
+                object endLevel = 3;
+                object tightAlignPageNumber = true;
+                object n = System.Reflection.Missing.Value;
+                object enableLink = true;
+
+                App.Selection.Font.Bold = 1;
+                App.Selection.Font.Size = 14;// 四号
+                App.Selection.Font.Name = "黑体";
+                App.Selection.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                App.Selection.ParagraphFormat.LineSpacingRule = Word.WdLineSpacing.wdLineSpaceExactly;// 固定值
+                App.Selection.ParagraphFormat.LineSpacing = float.Parse("20");// 20 磅
+                App.Selection.TypeText("目    录");
+                App.Selection.TypeParagraph();// 换行
+                App.Selection.TypeParagraph();// 换行
+                App.Selection.TypeParagraph();// 换行
+
+                //插入目录
+                App.ActiveDocument.TablesOfContents.Add(App.Selection.Range, ref n, ref beginLevel, ref endLevel, ref n, ref n, ref n, ref n, ref n, ref enableLink, ref n, ref n);
+            }
+            catch (Exception ex)
+            {
+
+                //throw;
+            }
+
+        }
+
+        private void PageSetting(Word.Document Doc, Word.Application App)
+        {
+            try
+            {
+                this.doc = Doc;
                 this.doc.PageSetup.TopMargin = this.wordapp.CentimetersToPoints(float.Parse("2.54"));// 上边距
                 this.doc.PageSetup.BottomMargin = this.wordapp.CentimetersToPoints(float.Parse("2.54"));// 下边距
                 this.doc.PageSetup.LeftMargin = this.wordapp.CentimetersToPoints(float.Parse("4.17"));// 左边距
@@ -45,17 +96,16 @@ namespace LarkADDIN
 
                 this.doc.PageSetup.HeaderDistance = this.wordapp.CentimetersToPoints(float.Parse("1.5"));//页眉顶端距离
                 this.doc.PageSetup.FooterDistance = this.wordapp.CentimetersToPoints(float.Parse("1.75"));//页脚底端距离
-
-
-                //rng.Select();
             }
             catch (Exception ex)
             {
-                // Handle exception if for some reason the document is not available.
+
+                throw;
             }
         }
 
-        private void 
+
+
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
